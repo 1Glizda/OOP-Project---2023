@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C++ Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/a.out", // Replace with your executable path
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: g++ build active file", // This assumes you have a build task defined.
+            "miDebuggerPath": "/usr/bin/lldb-mi", // Path to lldb-mi executable
+            "program": "${workspaceFolder}/a.out", // Replace with your executable path
+            "macAutomaticallyGDB": true
+        }
+    ]
+}
