@@ -12,7 +12,7 @@ int main() {
 
     //object creating and testing 
     Event e;
-    Event e2("12-12-2002", "23:30", "bOb");
+    Event e1("12-12-2002", "23:30", "bOb");
     e.showObject();
     e2.showObject();
     e.deleteEvent();
