@@ -125,6 +125,36 @@ public:
         name = new char[strlen("no name") + 1];
         strcpy(name, "no name");
     }
+
+    Event operator--() {
+        // Pre-decrement operator
+        if (isValidDate(date)) {
+            int day = stoi(date.substr(0, 2));
+            if (day > 1) {
+                date[0] = static_cast<char>((day - 1) / 10 + '0');
+                date[1] = static_cast<char>((day - 1) % 10 + '0');
+            }
+        }
+        return *this;
+    }
+
+    Event operator--(int) {
+        // Post-decrement operator
+        Event temp = *this;
+        if (isValidDate(date)) {
+            int day = stoi(date.substr(0, 2));
+            if (day > 1) {
+                date[0] = static_cast<char>((day - 1) / 10 + '0');
+                date[1] = static_cast<char>((day - 1) % 10 + '0');
+            }
+        }
+        return temp;
+    }
+
+    bool operator<(const Event& other) const {
+        // Relational operator <
+        return date < other.date;
+    }
 };
 
 ostream& operator<<(ostream& os, const Event& event) {
