@@ -116,7 +116,15 @@ public:
 
     void showObject() {
     cout << "This is the date: " << date << "\nThis is the time: " << time << "\nThis is the name: " << name << endl << endl;
-}
+    }
+
+    void deleteEvent() {
+        date = "00-00-0000";
+        time = "00:00";
+        delete[] name;
+        name = new char[strlen("no name") + 1];
+        strcpy(name, "no name");
+    }
 };
 
 ostream& operator<<(ostream& os, const Event& event) {

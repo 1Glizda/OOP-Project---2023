@@ -36,12 +36,6 @@ public:
         return seatsPerRow;
     }
 
-    void showObject() {
-        cout << "This is the max nr of seats: " << maxSeatsNr << "\nThis is the no. of rows: " << noRows
-             << "\nThis is the zone: " << zones << "\nThis is the nr of seats per row: " << seatsPerRow << endl
-             << endl;
-    }
-
     int getMaxSeatsNr() const {
         return maxSeatsNr;
     }
@@ -94,6 +88,19 @@ public:
 
     void setZones(ZoneTypes Zones) {
         zones = Zones;
+    }
+
+     void showObject() {
+        cout << "This is the max nr of seats: " << maxSeatsNr << "\nThis is the no. of rows: " << noRows
+             << "\nThis is the zone: " << zones << "\nThis is the nr of seats per row: " << seatsPerRow << endl
+             << endl;
+    }
+
+    void deleteEventLocation() {
+        maxSeatsNr = 0;
+        noRows = 0;
+        zones = ZoneTypes(Nord);
+        seatsPerRow = 0;
     }
 
 };

@@ -42,10 +42,6 @@ public:
         }
      };
 
-     void showObject() {
-        cout << "Ticket id: " << ticketId << "\nIs valid: " << isValid << "\nIs vip: " << isVIP << "\nDistrict: " 
-        << district << "\nDays valid: " << validity << endl << endl;
-            }
 
     int getTicketId() const {
         return ticketId;
@@ -85,6 +81,18 @@ public:
         } else {
             this->validity = 1;
         }
+    }
+
+    void showObject() {
+        cout << "Ticket id: " << ticketId << "\nIs valid: " << isValid << "\nIs vip: " << isVIP << "\nDistrict: " 
+        << district << "\nDays valid: " << validity << endl << endl;
+    }
+
+     void deleteTicket() {
+        isValid = false;
+        isVIP = false;
+        district = "deleted";
+        validity = 0;
     }
 };
 
