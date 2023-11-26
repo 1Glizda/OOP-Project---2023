@@ -94,6 +94,23 @@ public:
         district = "deleted";
         validity = 0;
     }
+
+    char operator[](size_t index) const {
+        if (index < district.size()) {
+            return district[index];
+        } else {
+            return '\0'; // Return null character for out-of-bounds access
+        }
+    }
+
+    Ticket operator+(const Ticket& other) const {
+        Ticket result;
+        result.isValid = isValid || other.isValid;
+        result.isVIP = isVIP || other.isVIP;
+        result.district = district + other.district;
+        result.validity = validity + other.validity;
+        return result;
+    }
 };
 
 istream& operator>>(istream& is, Ticket& ticket) {
