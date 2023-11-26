@@ -103,6 +103,28 @@ public:
         seatsPerRow = 0;
     }
 
+    EventLocation operator++() {
+        // Pre-increment operator
+        maxSeatsNr++;
+        return *this;
+    }
+
+    EventLocation operator++(int) {
+        // Post-increment operator
+        EventLocation temp = *this;
+        maxSeatsNr++;
+        return temp;
+    }
+
+    operator int() const {
+        // Implicit conversion to int
+        return maxSeatsNr;
+    }
+
+    explicit operator float() const {
+        // Explicit conversion to float
+        return static_cast<float>(maxSeatsNr) / noRows;
+    }
 };
 
 float EventLocation::seatsPerRow = 0;
