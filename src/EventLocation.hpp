@@ -1,5 +1,5 @@
-#include <string>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -7,27 +7,8 @@ enum ZoneTypes {
     East, South, Nord, West
 };
 
-ostream& operator<<(ostream& os, const ZoneTypes& zone) {
-    switch (zone) {
-        case East:
-            os << "East";
-            break;
-        case South:
-            os << "South";
-            break;
-        case Nord:
-            os << "Nord";
-            break;
-        case West:
-            os << "West";
-            break;
-        default:
-            os << "Unknown Zone";
-    }
-    return os;
-}
-
 class EventLocation {
+protected:
     int maxSeatsNr;
     int noRows;
     ZoneTypes zones;
@@ -38,7 +19,6 @@ public:
         this->maxSeatsNr = 1;
         this->noRows = 1;
         this->zones = ZoneTypes(Nord);
-        this->seatsPerRow = maxSeatsNr / noRows;
     }
 
     EventLocation(int MaxSeatsNr, int NoRows, ZoneTypes Zones) {
@@ -50,7 +30,6 @@ public:
             this->noRows = 0;
         };
         this->zones = Zones;
-        this->seatsPerRow = maxSeatsNr / noRows;
     }
 
     static float getSeatsPerRow()  {
@@ -89,9 +68,29 @@ public:
         seatsPerRow = maxSeatsNr / noRows;
     }
 
-    ZoneTypes getZones() const {
-        return zones;
+    string getZones() const {
+        string zoneString;
+
+        switch (zones) {
+        case East:
+            zoneString = "East";
+            break;
+        case South:
+            zoneString = "South";
+            break;
+        case Nord:
+            zoneString = "Nord";
+            break;
+        case West:
+            zoneString = "West";
+            break;
+        default:
+            zoneString = "Unknown Zone";
+        }
+
+        return zoneString;
     }
+
 
     void setZones(ZoneTypes Zones) {
         zones = Zones;
@@ -101,3 +100,34 @@ public:
 
 float EventLocation::seatsPerRow = 0;
 
+ostream& operator<<(ostream& os, const EventLocation& eventLocation) {
+    os << "Max number of seats: " << eventLocation.getMaxSeatsNr()
+       << "\nNumber of rows: " << eventLocation.getNoRows()
+       << "\nZone: " << eventLocation.getZones()
+       << "\nNumber of seats per row: " << EventLocation::getSeatsPerRow() << endl << endl;
+    return os;
+}
+
+istream& operator>>(istream& is, EventLocation& eventLocation) {
+    cout << "Enter Event Location details:\n";
+
+    // Accessing the public setter methods instead of protected members directly
+    int maxSeatsNr, noRows;
+    ZoneTypes zones;
+
+    cout << "Max number of seats: ";
+    is >> maxSeatsNr;
+    eventLocation.setMaxSeatsNr(maxSeatsNr);
+
+    cout << "Number of rows: ";
+    is >> noRows;
+    eventLocation.setNoRows(noRows);
+
+    cout << "Zone (0 for East, 1 for South, 2 for Nord, 3 for West): ";
+    int zoneInt;
+    is >> zoneInt;
+    zones = static_cast<ZoneTypes>(zoneInt);
+    eventLocation.setZones(zones);
+
+    return is;
+}

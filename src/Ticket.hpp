@@ -14,6 +14,9 @@ class Ticket {
         return rand();
     }
 
+    friend ostream& operator<<(ostream& os, const Ticket& ticket);
+    friend istream& operator>>(istream& is, Ticket& ticket);
+
 public:
      Ticket() : ticketId(genRandomNumber()){
         this->isValid = true;
@@ -84,3 +87,50 @@ public:
         }
     }
 };
+
+istream& operator>>(istream& is, Ticket& ticket) {
+    cout << "Enter Ticket details:\n";
+
+    cout << "Is Valid (1 for true, 0 for false): ";
+    is >> ticket.isValid;
+    if (is.fail() || (ticket.isValid != 0 && ticket.isValid != 1)) {
+        is.setstate(ios::failbit);
+    }
+
+    if (ticket.isValid) {
+        cout << "Is VIP (1 for true, 0 for false): ";
+        is >> ticket.isVIP;
+        if (is.fail() || (ticket.isVIP != 0 && ticket.isVIP != 1)) {
+            is.setstate(ios::failbit);
+        }
+
+        cout << "District (string): ";
+        is.ignore();
+        getline(is, ticket.district);
+        if (ticket.district.empty()) {
+            is.setstate(ios::failbit);
+        }
+
+        cout << "Validity (integer): ";
+        is >> ticket.validity;
+        if (is.fail() || ticket.validity <= 0) {
+            is.setstate(ios::failbit);
+        }
+    } else {
+        ticket.isVIP = false;
+        ticket.district = "none";
+        ticket.validity = 0;
+    }
+
+    return is;
+}
+
+ostream& operator<<(ostream& os, const Ticket& ticket) {
+    os << "Ticket id: " << ticket.getTicketId()
+       << "\nIs valid: " << (ticket.getIsValid() ? "true" : "false")
+       << "\nIs vip: " << (ticket.getIsVIP() ? "true" : "false")
+       << "\nDistrict: " << ticket.getDistrict()
+       << "\nDays valid: " << ticket.getValidity() << endl << endl;
+    return os;
+}
+

@@ -28,5 +28,40 @@ int main() {
     t1.showObject();
     t2.showObject();
 
+    //cin inputs for the objects
+    try {
+        Ticket ticket;
+        cout << "Enter Ticket details (Is Valid, Is VIP, District, Validity): ";
+        cin >> ticket;
+        cout << "Ticket Details:\n" << ticket;
+
+        if (ticket.getIsValid()) {
+            cout << "Valid Ticket Details:\n" << ticket;
+        } else {
+            cout << "Invalid Ticket Details. Default values used.\n";
+        }
+    } catch (const exception& e) {
+        cerr << "Exception: " << e.what() << endl;
+        cout << "Please run the program again and provide valid input.\n";
+    };
+
+    try {
+        EventLocation location;
+        cin >> location;
+        cout << "Event Location details:\n" << location;
+    } catch (const exception& e) {
+        cerr << "Exception: " << e.what() << endl;
+        cout << "Please run the program again and provide valid input.\n";
+    }
+
+    try {
+        Event event;
+        cin >> event;
+        cout << "\nEvent Details:\n" << event;
+    } catch (const exception& e) {
+        cerr << "Exception: " << e.what() << endl;
+        cout << "Please run the program again and provide valid input.\n";
+    }
+
     return 0;
 }
