@@ -144,11 +144,11 @@ istream& operator>>(istream& is, EventLocation& eventLocation) {
     int maxSeatsNr, noRows;
     ZoneTypes zones;
 
-    cout << "Max number of seats: ";
+    cout << "Max number of seats (integer): ";
     is >> maxSeatsNr;
     eventLocation.setMaxSeatsNr(maxSeatsNr);
 
-    cout << "Number of rows: ";
+    cout << "Number of rows (integer): ";
     is >> noRows;
     eventLocation.setNoRows(noRows);
 

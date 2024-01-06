@@ -114,8 +114,7 @@ public:
 };
 
 istream& operator>>(istream& is, Ticket& ticket) {
-    cout << "Enter Ticket details:\n";
-
+    cout << "\n";
     cout << "Is Valid (1 for true, 0 for false): ";
     is >> ticket.isValid;
     if (is.fail() || (ticket.isValid != 0 && ticket.isValid != 1)) {
@@ -129,14 +128,14 @@ istream& operator>>(istream& is, Ticket& ticket) {
             is.setstate(ios::failbit);
         }
 
-        cout << "District (string): ";
+        cout << "District (string, ex. 'Floor'): ";
         is.ignore();
         getline(is, ticket.district);
         if (ticket.district.empty()) {
             is.setstate(ios::failbit);
         }
 
-        cout << "Validity (integer): ";
+        cout << "Validity (integer, ex. '3' (days) ): ";
         is >> ticket.validity;
         if (is.fail() || ticket.validity <= 0) {
             is.setstate(ios::failbit);

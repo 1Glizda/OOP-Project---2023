@@ -14,9 +14,9 @@ int main() {
     Event e;
     Event e1("12-12-2002", "23:30", "bOb");
     e.showObject();
-    e2.showObject();
+    e1.showObject();
     e.deleteEvent();
-    e2.deleteEvent();
+    e1.deleteEvent();
 
     EventLocation el;
     EventLocation el2(-32, 8, South);
