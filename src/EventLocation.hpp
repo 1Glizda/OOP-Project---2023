@@ -14,11 +14,16 @@ protected:
     ZoneTypes zones;
     static float seatsPerRow;
 
+    friend ostream& operator<<(ostream& os, const EventLocation& eventLocation);
+    friend istream& operator>>(istream& is, EventLocation& eventLocation);
+    friend ifstream& operator>>(ifstream& ifs, EventLocation& eventLocation);
+
 public:
     EventLocation() {
         this->maxSeatsNr = 1;
         this->noRows = 1;
         this->zones = ZoneTypes(Nord);
+        this->seatsPerRow = 1;
     }
 
     EventLocation(int MaxSeatsNr, int NoRows, ZoneTypes Zones) {
@@ -30,6 +35,40 @@ public:
             this->noRows = 0;
         };
         this->zones = Zones;
+    }
+
+    void writeTextFile() {
+        ofstream txt_f("EventLocation.txt", ios::app);
+
+        txt_f << this->maxSeatsNr << "\n";
+        txt_f << this->noRows << "\n";
+        txt_f << this->zones << "\n";
+        txt_f << this->seatsPerRow << "\n\n";
+
+        txt_f.close();
+        cout << "Text file written successfully.\n";
+    }
+
+    void readTextFile(vector<EventLocation>& locations) {
+        ifstream txt_f("EventLocation.txt");
+
+        while (!txt_f.eof()) {
+            EventLocation l;
+            
+            txt_f >> l.maxSeatsNr;
+            txt_f >> l.noRows;
+            int tempZone;
+            txt_f >> tempZone;
+            l.zones = static_cast<ZoneTypes>(tempZone);
+
+            txt_f >> l.seatsPerRow;
+            cout << l;
+
+            locations.push_back(l);
+        }
+
+        txt_f.close();
+        cout << "Text file read successfully.\n";
     }
 
     static float getSeatsPerRow()  {
@@ -138,24 +177,43 @@ ostream& operator<<(ostream& os, const EventLocation& eventLocation) {
 }
 
 istream& operator>>(istream& is, EventLocation& eventLocation) {
-    cout << "Enter Event Location details:\n";
+    cout << "Enter Even_Location details:\n\n";
 
-    // Accessing the public setter methods instead of protected members directly
-    int maxSeatsNr, noRows;
+    int maxSeatsNr, noRows, zoneInt;
     ZoneTypes zones;
 
+    do {
     cout << "Max number of seats (integer): ";
     is >> maxSeatsNr;
+    if(eventLocation.maxSeatsNr <= 0) {
+        cerr << "Invalid input. Please try again.\n";
+        is.clear();  
+        is.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    } while (eventLocation.maxSeatsNr <= 0);
     eventLocation.setMaxSeatsNr(maxSeatsNr);
 
+    do {
     cout << "Number of rows (integer): ";
     is >> noRows;
+    if(eventLocation.noRows <= 0) {
+        cerr << "Invalid input. Please try again.\n";
+        is.clear();
+        is.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    } while (eventLocation.noRows <= 0);
     eventLocation.setNoRows(noRows);
 
+    do {
     cout << "Zone (0 for East, 1 for South, 2 for Nord, 3 for West): ";
-    int zoneInt;
     is >> zoneInt;
+    if(zoneInt < 0 ||zoneInt > 3) {
+        cerr << "Invalid input. Please try again.\n";
+        is.clear();
+        is.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
     zones = static_cast<ZoneTypes>(zoneInt);
+    } while (zoneInt < 0 || zoneInt > 3);
     eventLocation.setZones(zones);
 
     return is;

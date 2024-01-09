@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
 class Ticket {
     const int ticketId;
+    int ticketid;
     bool isValid;
     bool isVIP;
     string district;
@@ -16,6 +18,7 @@ class Ticket {
 
     friend ostream& operator<<(ostream& os, const Ticket& ticket);
     friend istream& operator>>(istream& is, Ticket& ticket);
+    friend ifstream& operator>>(ifstream& ifs, Ticket& ticket);
 
 public:
      Ticket() : ticketId(genRandomNumber()){
@@ -42,9 +45,47 @@ public:
         }
      };
 
+     void writeTextFile() {
+        ofstream txt_f("Ticket.txt", ios::app);
+
+        txt_f << this->ticketId << "\n";
+        txt_f << this->isValid << "\n";
+        txt_f << this->isVIP << "\n";
+        txt_f << this->district << "\n";
+        txt_f << this->validity << "\n\n";
+
+        txt_f.close();
+        cout << "Text file written successfully.\n";
+    }
+
+    void readTextFile(vector<Ticket>& tickets) {
+        ifstream txt_f("Ticket.txt");
+
+        while (!txt_f.eof()) {
+            while (txt_f >> ticketid >> isValid >> isVIP) {
+                txt_f.ignore(numeric_limits<streamsize>::max(), '\n');  // Skip newline
+                getline(txt_f, district);
+                txt_f >> validity;
+
+                Ticket t(isValid, isVIP, district, validity);
+                t.ticketid = ticketid;  // Set the ticket ID from the file
+
+                cout << t;
+                tickets.push_back(t);
+            }
+        }
+
+        txt_f.close();
+        cout << "Text file read successfully.\n";
+    }
+
 
     int getTicketId() const {
         return ticketId;
+    }
+
+    int getTicketid() const {
+        return ticketid;
     }
 
     bool getIsValid() const {
@@ -115,31 +156,68 @@ public:
 
 istream& operator>>(istream& is, Ticket& ticket) {
     cout << "\n";
-    cout << "Is Valid (1 for true, 0 for false): ";
-    is >> ticket.isValid;
-    if (is.fail() || (ticket.isValid != 0 && ticket.isValid != 1)) {
-        is.setstate(ios::failbit);
+
+    while (true) {
+        cout << "Is Valid (1 for true, 0 for false): ";
+        is >> ticket.isValid;
+
+        if (is.fail()) {
+            cerr << "Invalid input. Please enter a valid integer.\n";
+            is.clear(); 
+            is.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else if (ticket.isValid != 0 && ticket.isValid != 1) {
+            cerr << "Invalid input. Please enter 0 or 1.\n";
+            is.clear(); 
+            is.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else {
+            // Valid input, break out of the loop
+            break;
+        }
     }
 
-    if (ticket.isValid) {
-        cout << "Is VIP (1 for true, 0 for false): ";
-        is >> ticket.isVIP;
-        if (is.fail() || (ticket.isVIP != 0 && ticket.isVIP != 1)) {
-            is.setstate(ios::failbit);
-        }
 
+
+    if (ticket.isValid) {
+        while (true) {
+            cout << "Is VIP (1 for true, 0 for false): ";
+            is >> ticket.isVIP;
+
+            if (is.fail()) {
+            cerr << "Invalid input. Please enter a valid integer.\n";
+            is.clear(); 
+            is.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else if (ticket.isVIP != 0 && ticket.isVIP != 1) {
+            cerr << "Invalid input. Please enter 0 or 1.\n";
+            is.clear(); 
+            is.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else {
+            // Valid input, break out of the loop
+            break;
+        }}
+
+
+        do {
         cout << "District (string, ex. 'Floor'): ";
         is.ignore();
         getline(is, ticket.district);
-        if (ticket.district.empty()) {
-            is.setstate(ios::failbit);
-        }
 
+        if (ticket.district.empty()) {
+            cerr << "Invalid input. Please try again.\n";
+            is.clear();  
+            is.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+        } while (ticket.district.empty());
+
+        do {
         cout << "Validity (integer, ex. '3' (days) ): ";
         is >> ticket.validity;
-        if (is.fail() || ticket.validity <= 0) {
-            is.setstate(ios::failbit);
+
+        if (ticket.validity <= 0) {
+            cerr << "Invalid input. Please try again.\n";
+            is.clear();  
+            is.ignore(numeric_limits<streamsize>::max(), '\n');
         }
+        } while (ticket.validity <= 0);
     } else {
         ticket.isVIP = false;
         ticket.district = "none";
@@ -150,11 +228,19 @@ istream& operator>>(istream& is, Ticket& ticket) {
 }
 
 ostream& operator<<(ostream& os, const Ticket& ticket) {
+    if (ticket.ticketid == 0) {
     os << "Ticket id: " << ticket.getTicketId()
        << "\nIs valid: " << (ticket.getIsValid() ? "true" : "false")
        << "\nIs vip: " << (ticket.getIsVIP() ? "true" : "false")
        << "\nDistrict: " << ticket.getDistrict()
        << "\nDays valid: " << ticket.getValidity() << endl << endl;
     return os;
+    } else {
+    os << "Ticket id: " << ticket.getTicketid()
+       << "\nIs valid: " << (ticket.getIsValid() ? "true" : "false")
+       << "\nIs vip: " << (ticket.getIsVIP() ? "true" : "false")
+       << "\nDistrict: " << ticket.getDistrict()
+       << "\nDays valid: " << ticket.getValidity() << endl << endl;
+    return os;    
+    }
 }
-

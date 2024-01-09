@@ -3,6 +3,7 @@
 
 using namespace std;
 
+
 class Event {
     string date;
     string time;
@@ -10,6 +11,7 @@ class Event {
 
     friend ostream& operator<<(ostream& os, const Event& event);
     friend istream& operator>>(istream& is, Event& event);
+    friend ifstream& operator>>(ifstream& ifs, Event& event);
 
     bool isValidDate(const string& date) const {
         if (date.size() != 10 || date[2] != '-' || date[5] != '-') {
@@ -72,12 +74,59 @@ public:
         }
         this->date = Date;
         this->time = Time;
-        this->name = new char(strlen(Name) + 1);
+        this->name = new char[strlen(Name) + 1];
         strcpy(name, Name);
+    }
+
+    void writeTextFile() {
+        ofstream txt_f("Event.txt", ios::app);
+
+        txt_f << this->date << "\n";
+        txt_f << this->time << "\n";
+        txt_f << this->name << "\n";
+
+        txt_f.close();
+        cout << "Text file written successfully.\n";
+    }
+
+    void readTextFile(vector<Event>& events) {
+        ifstream txt_f("Event.txt");
+
+        while (!txt_f.eof()) {
+            Event e;
+            
+            getline(txt_f, e.date);
+            getline(txt_f, e.time);
+            char buffer[256];
+            txt_f.getline(buffer, 256);
+            e.setName(buffer);
+            cout << e;
+
+            events.push_back(e);
+        }
+
+        txt_f.close();
+        cout << "Text file read successfully.\n";
     }
 
     ~Event() {
         delete[] name;
+    }
+
+    Event(const Event& other) : date(other.date), time(other.time) {
+        name = new char[strlen(other.name) + 1];
+        strcpy(name, other.name);
+    }
+
+    Event& operator=(const Event& other) {
+        if (this != &other) {
+            delete[] name;
+            date = other.date;
+            time = other.time;
+            name = new char[strlen(other.name) + 1];
+            strcpy(name, other.name);
+        }
+        return *this;
     }
 
     string getDate() const {
@@ -121,7 +170,6 @@ public:
     void deleteEvent() {
         date = "00-00-0000";
         time = "00:00";
-        delete[] name;
         name = new char[strlen("no name") + 1];
         strcpy(name, "no name");
     }
@@ -167,26 +215,31 @@ ostream& operator<<(ostream& os, const Event& event) {
 istream& operator>>(istream& is, Event& event) {
     cout << "Enter Event details: \n";
 
+    do {
     cout << "Date (DD-MM-YYYY): ";
     is >> event.date;
-    if (!event.isValidDate(event.date)) {
-        is.setstate(ios::failbit);
-        return is;
-    }
 
+    if (!event.isValidDate(event.date)) {
+        cerr << "Invalid date input. Please try again.\n";
+        is.clear();  
+        is.ignore(numeric_limits<streamsize>::max(), '\n'); 
+        }
+    } while (!event.isValidDate(event.date));
+
+    do {
     cout << "Time (23:59): ";
     is >> event.time;
     if (!event.isValidTime(event.time)) {
-        is.setstate(ios::failbit);
-        return is;
-    }
+        cerr << "Invalid time input. Please try again.\n";
+        is.clear(); 
+        is.ignore(numeric_limits<streamsize>::max(), '\n'); 
+        }
+    } while (!event.isValidTime(event.time));
 
     cout << "Event name: ";
-    char buffer[256]; // Assuming a reasonable maximum length for the name
+    char buffer[256]; 
     is >> buffer;
-    delete[] event.name; // Release the existing memory
-    event.name = new char[strlen(buffer) + 1];
-    strcpy(event.name, buffer);
+    event.setName(buffer);
 
     return is;
 }
