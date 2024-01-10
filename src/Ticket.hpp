@@ -45,38 +45,83 @@ public:
         }
      };
 
-     void writeTextFile() {
-        ofstream txt_f("Ticket.txt", ios::app);
+     void writeFile() {
+        // ofstream txt_f("Ticket.txt", ios::app);
 
-        txt_f << this->ticketId << "\n";
-        txt_f << this->isValid << "\n";
-        txt_f << this->isVIP << "\n";
-        txt_f << this->district << "\n";
-        txt_f << this->validity << "\n\n";
+        // txt_f << this->ticketId << "\n";
+        // txt_f << this->isValid << "\n";
+        // txt_f << this->isVIP << "\n";
+        // txt_f << this->district << "\n";
+        // txt_f << this->validity << "\n\n";
+        ofstream f("Ticket.dat", ios::binary | ios::app);
 
-        txt_f.close();
-        cout << "Text file written successfully.\n";
+        f.write((char*)&this->ticketId, sizeof(this->ticketId));
+        f.write((char*)&this->isValid, sizeof(this->isValid));
+        f.write((char*)&this->isVIP, sizeof(this->isVIP));
+
+        int districtLength = this->district.length();
+        f.write((char*)&districtLength, sizeof(districtLength));
+        f.write(this->district.c_str(), districtLength);
+
+        f.write((char*)&this->validity, sizeof(this->validity));
+
+        // txt_f.close();
+        f.close();
+        cout << "Binary file written successfully.\n";
     }
 
-    void readTextFile(vector<Ticket>& tickets) {
-        ifstream txt_f("Ticket.txt");
+    // void readTextFile(vector<Ticket>& tickets) {
+    //     ifstream txt_f("Ticket.txt");
 
-        while (!txt_f.eof()) {
-            while (txt_f >> ticketid >> isValid >> isVIP) {
-                txt_f.ignore(numeric_limits<streamsize>::max(), '\n');  // Skip newline
-                getline(txt_f, district);
-                txt_f >> validity;
+    //     while (!txt_f.eof()) {
+    //         while (txt_f >> ticketid >> isValid >> isVIP) {
+    //             txt_f.ignore(numeric_limits<streamsize>::max(), '\n');  // Skip newline
+    //             getline(txt_f, district);
+    //             txt_f >> validity;
 
-                Ticket t(isValid, isVIP, district, validity);
-                t.ticketid = ticketid;  // Set the ticket ID from the file
+    //             Ticket t(isValid, isVIP, district, validity);
+    //             t.ticketid = ticketid;  // Set the ticket ID from the file
 
-                cout << t;
-                tickets.push_back(t);
-            }
+    //             cout << t;
+    //             tickets.push_back(t);
+    //         }
+    //     }
+
+    //     txt_f.close();
+    //     cout << "Text file read successfully.\n";
+    // }
+
+    void readBinaryFile(vector<Ticket>& tickets) {
+    ifstream f("Ticket.dat", ios::binary);
+
+    while (true) {
+        Ticket ticket;
+
+        if (!f.read((char*)&ticket.ticketid, sizeof(ticket.ticketid))) {
+            break; // Reached end of file
         }
 
-        txt_f.close();
-        cout << "Text file read successfully.\n";
+        f.read((char*)&ticket.isValid, sizeof(ticket.isValid));
+        f.read((char*)&ticket.isVIP, sizeof(ticket.isVIP));
+
+        int districtLength;
+        f.read((char*)&districtLength, sizeof(districtLength));
+
+        char buffer[districtLength + 1];
+        f.read(buffer, districtLength);
+        buffer[districtLength] = '\0';
+        ticket.district = buffer;
+
+        f.read((char*)&ticket.validity, sizeof(ticket.validity));
+
+
+        cout << ticket; // this will show all the previous created tickets, but all the previous will have
+        tickets.push_back(ticket);
+    }
+
+    f.close();
+
+    cout << "Binary file read successfully.\n\n";
     }
 
 

@@ -11,6 +11,11 @@ vector<Ticket> ticketList;
 vector<EventLocation> eventLocationList;
 vector<Event> eventList;
 
+bool fileExists(const string& filename) {
+    ifstream file(filename.c_str());
+    return file.good();
+}
+
 int main() {
     //part of generating random integer function
     srand(static_cast<unsigned>(time(nullptr)));
@@ -43,10 +48,14 @@ int main() {
     t1.deleteTicket();
     t2.deleteTicket();
 
-    //cin inputs for the objects, with a terminal menu
     Event event;
     EventLocation location;
     Ticket ticket;
+    if (fileExists("Ticket.dat")) {
+        ticket.readBinaryFile(ticketList);
+    };
+
+    //cin inputs for the objects, with a terminal menu
     char choice;
     do {
         cout << "Choose an option:\n";
@@ -58,24 +67,22 @@ int main() {
         cout << "6. Show All Events\n";
         cout << "7. Exit\n";
 
-        cout << "Enter your choice (1-7): ";
+        cout << "\nEnter your choice (1-7): ";
         cin >> choice;
+        cout << "\n";
 
          switch (choice) {
             case '1': {
                 try {
+                    Ticket tk;
                     cout << "\nEnter Ticket details \n";
-                    cin >> ticket;
-                    ticketList.push_back(ticket);
-                    cout << "Ticket Details:\n" << ticket;
-
-                    if (ticket.getIsValid()) {
-                        cout << "Valid Ticket Details:\n" << ticket;
-                    } else {
+                    cin >> tk;
+                    ticketList.push_back(tk);
+                    if (!ticket.getIsValid()) {
                         cout << "Invalid Ticket Details. Default values used.\n";
                     }
-                    ticket.writeTextFile();
-                    ticket.deleteTicket();
+                    tk.writeFile();
+                    tk.deleteTicket();
                 } catch (const exception& e) {
                     cerr << "Exception: " << e.what() << endl;
                     cout << "Please run the program again and provide valid input.\n";
@@ -109,7 +116,7 @@ int main() {
                 break;
             }
             case '4':
-                ticket.readTextFile(ticketList);
+                ticket.readBinaryFile(ticketList);
                 break;
             case '5':
                 location.readTextFile(eventLocationList);
